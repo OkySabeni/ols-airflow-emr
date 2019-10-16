@@ -192,13 +192,15 @@ batch_transform_task = SageMakerTransformOperator(
 )
 
 basher_task = BashOperator(
-    task_id='print_date',
-    bash_command='date',
-    dag=dag)
+    task_id='sleep',
+    bash_command='sleep 5',
+    dag=dag
+)
 
 cleanup_task = DummyOperator(
     task_id='cleaning_up',
-    dag=dag)
+    dag=dag
+)
 
 # set the dependencies between tasks
 
@@ -209,7 +211,9 @@ branching >> tune_model_task
 branching >> train_model_task
 tune_model_task >> batch_transform_task
 train_model_task >> batch_transform_task
-batch_transform_task >> cleanup_task
+# batch_transform_task >> cleanup_task
+batch_transform_task >> basher_task
+basher_task >> cleanup_task
 
 # init.set_downstream(preprocess_task)
 # preprocess_task.set_downstream(prepare_task)
