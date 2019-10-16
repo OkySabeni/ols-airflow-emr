@@ -36,6 +36,8 @@ from sagemaker.workflow.airflow import transform_config_from_estimator
 from pipeline import prepare, preprocess
 import config as cfg
 
+from airflow.operators.bash_operator import BashOperator
+
 # =============================================================================
 # functions
 # =============================================================================
@@ -189,17 +191,31 @@ batch_transform_task = SageMakerTransformOperator(
     trigger_rule=TriggerRule.ONE_SUCCESS
 )
 
+basher_task = BashOperator(
+    task_id='print_date',
+    bash_command='date',
+    dag=dag)
+
 cleanup_task = DummyOperator(
     task_id='cleaning_up',
     dag=dag)
 
 # set the dependencies between tasks
 
-init.set_downstream(preprocess_task)
-preprocess_task.set_downstream(prepare_task)
-prepare_task.set_downstream(branching)
-branching.set_downstream(tune_model_task)
-branching.set_downstream(train_model_task)
-tune_model_task.set_downstream(batch_transform_task)
-train_model_task.set_downstream(batch_transform_task)
-batch_transform_task.set_downstream(cleanup_task)
+# init.set_downstream(preprocess_task)
+# preprocess_task.set_downstream(prepare_task)
+# prepare_task.set_downstream(branching)
+# branching.set_downstream(tune_model_task)
+# branching.set_downstream(train_model_task)
+# tune_model_task.set_downstream(batch_transform_task)
+# train_model_task.set_downstream(batch_transform_task)
+# batch_transform_task.set_downstream(cleanup_task)
+init >> preprocess_task
+preprocess_task >> prepare_task
+prepare_task >> branching
+branching >> tune_model_task
+branching >> train_model_task
+tune_model_task >> batch_transform_task
+train_model_task >> batch_transform_task
+batch_transform_task >> basher_task
+basher_task >> cleanup_task
