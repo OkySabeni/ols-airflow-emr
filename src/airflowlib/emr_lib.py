@@ -17,7 +17,7 @@ def get_security_group_id(group_name, region_name):
 
 def create_cluster(region_name, cluster_name='Airflow-' + str(datetime.now()), release_label='emr-5.9.0',master_instance_type='m3.xlarge', num_core_nodes=2, core_node_instance_type='m3.2xlarge'):
     emr_master_security_group_id = get_security_group_id('ElasticMapReduce-master', region_name=region_name)
-    emr_slave_security_group_id = get_security_group_id('ElasticMapReduce-slave)', region_name=region_name)
+    emr_slave_security_group_id = get_security_group_id('ElasticMapReduce-slave', region_name=region_name)
     cluster_response = emr.run_job_flow(
         Name=cluster_name,
         ReleaseLabel=release_label,
