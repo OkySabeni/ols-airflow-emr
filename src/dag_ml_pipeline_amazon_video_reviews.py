@@ -214,12 +214,3 @@ train_model_task >> batch_transform_task
 # batch_transform_task >> cleanup_task
 batch_transform_task >> basher_task
 basher_task >> cleanup_task
-
-# init.set_downstream(preprocess_task)
-# preprocess_task.set_downstream(prepare_task)
-# prepare_task.set_downstream(branching)
-# branching.set_downstream(tune_model_task)
-# branching.set_downstream(train_model_task)
-# tune_model_task.set_downstream(batch_transform_task)
-# train_model_task.set_downstream(batch_transform_task)
-# batch_transform_task.set_downstream(cleanup_task)
